@@ -1,0 +1,48 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Connection test document
+    match /test/{docId} {
+      allow read: if true;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidAnalysis(data) {
+      return data.userId is string && data.userId == request.auth.uid &&
+             data.contractTitle is string && data.contractTitle.size() <= 200 &&
+             data.role is string && data.role.size() <= 50 &&
+             data.worry is string && data.worry.size() <= 100 &&
+             data.tone is string && data.tone.size() <= 50 &&
+             data.riskScore is number && data.riskScore >= 0 && data.riskScore <= 100 &&
+             data.verdict is string && data.verdict.size() <= 50 &&
+             data.keys().hasAll(['userId', 'contractTitle', 'role', 'worry', 'tone', 'riskScore', 'verdict']);
+    }
+
+    // User-scoped analyses subcollection
+    match /users/{userId}/analyses/{analysisId} {
+      allow get: if isOwner(userId) && isValidId(analysisId);
+      allow list: if isOwner(userId);
+      allow delete: if isOwner(userId) && isValidId(analysisId);
+      allow create: if isOwner(userId) && isValidId(analysisId) && isValidAnalysis(request.resource.data);
+      allow update: if isOwner(userId) && isValidId(analysisId) && isValidAnalysis(request.resource.data) && request.resource.data.userId == resource.data.userId;
+    }
+  }
+}

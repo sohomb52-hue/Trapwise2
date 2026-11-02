@@ -1,0 +1,35 @@
+{
+  "entities": {
+    "Analysis": {
+      "title": "Analysis",
+      "description": "Saved contract risk analysis report",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "contractTitle": { "type": "string", "maxLength": 200 },
+        "role": { "type": "string", "maxLength": 50 },
+        "worry": { "type": "string", "maxLength": 100 },
+        "tone": { "type": "string", "maxLength": 50 },
+        "language": { "type": "string", "maxLength": 30 },
+        "riskScore": { "type": "number" },
+        "verdict": { "type": "string", "maxLength": 50 },
+        "justification": { "type": "string", "maxLength": 1000 },
+        "counts": { "type": "object" },
+        "clauses": { "type": "array" },
+        "villains": { "type": "array" },
+        "counterOffers": { "type": "array" },
+        "negotiationEmail": { "type": "string", "maxLength": 8000 },
+        "savedContractText": { "type": "boolean" },
+        "contractText": { "type": "string", "maxLength": 100000 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "contractTitle", "role", "worry", "tone", "riskScore", "verdict"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/analyses/{analysisId}": {
+      "schema": "Analysis",
+      "description": "User saved contract risk analysis"
+    }
+  }
+}

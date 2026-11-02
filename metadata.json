@@ -1,0 +1,8 @@
+{
+  "name": "Remix Fight My Fine Print",
+  "description": "Spot the risk. Feel the trap. Counter the offer. AI contract analyzer turning confusing fine print into plain-English warnings, Villain Cards, risk scores, and negotiation emails.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
